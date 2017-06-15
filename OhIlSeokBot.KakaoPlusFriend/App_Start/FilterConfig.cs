@@ -1,5 +1,8 @@
-﻿using System.Web;
+﻿using Microsoft.Practices.Unity;
+using OhIlSeokBot.KakaoPlusFriend.Services;
+using System.Web;
 using System.Web.Mvc;
+using Unity.Mvc5;
 
 namespace OhIlSeokBot.KakaoPlusFriend
 {
@@ -7,7 +10,17 @@ namespace OhIlSeokBot.KakaoPlusFriend
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
+            var container = new UnityContainer();
+
+            // register all your components with the container here
+            // it is NOT necessary to register your controllers
+
+            // e.g. container.RegisterType<ITestService, TestService>();
+
+            container.RegisterType<ISessionService, DocumentDBSessionService>();
+            container.RegisterType<IDirectLineConversationService, DirectLineCoversationService>();
+
+            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
     }
 }

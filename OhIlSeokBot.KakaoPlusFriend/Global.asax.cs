@@ -1,9 +1,9 @@
-﻿using System;
+﻿using OhIlSeokBot.KakaoPlusFriend.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Optimization;
 using System.Web.Routing;
 
 namespace OhIlSeokBot.KakaoPlusFriend
@@ -13,9 +13,12 @@ namespace OhIlSeokBot.KakaoPlusFriend
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            UnityConfig.RegisterComponents();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            DocumentDBRepository<Models.ConversationInfo>.Initialize();
+
         }
     }
 }
