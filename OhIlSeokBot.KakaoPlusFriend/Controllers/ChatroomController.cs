@@ -18,6 +18,7 @@ namespace OhIlSeokBot.KakaoPlusFriend.Controllers
         {
             conversationService = service;
         }
+
         /// <summary>
         /// 사용자가 채팅방 나가기를 해서 채팅방을 목록에서 삭제했을 경우 해당 정보를 파트너사 서버로 전달하는 API입니다.
         /// http(s)://:your_server_url/chat_room/:user_key

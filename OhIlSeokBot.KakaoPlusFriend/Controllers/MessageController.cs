@@ -36,7 +36,8 @@ namespace OhIlSeokBot.KakaoPlusFriend.Controllers
                 // covert from Kakao talk message to Bot Builder Activity
                 Activity activity = new Activity
                 {
-                    From = new ChannelAccount(user_key),
+                    // Bot 에서 메시지가 kakao로 부터 요청되었음을 알수 있도록 name에 kakao를 써준다. 
+                    From = new ChannelAccount(id:user_key,name:"kakao"),
                     Type = ActivityTypes.Message
                 };
                 if (type == "text")

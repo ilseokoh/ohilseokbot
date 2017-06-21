@@ -23,8 +23,8 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
         {
             sessionService = sessionsvc;
             client = new DirectLineClient(directLineSecret);
-            client.SetUserAgent("yellowid");
-
+            client.SetUserAgent("kakao");
+            
             // Retry 셋팅
             // client.SetRetryPolicy(new Microsoft.Rest.TransientFaultHandling.RetryPolicy(,3,TimeSpan.FromMilliseconds(300)));
         }
@@ -89,6 +89,7 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
             bool messageReceived = false;
             int requestCount = 0;
             List<Activity> responseActivity = null;
+            // 3번의 Retry
             while (!messageReceived)
             {
                 Thread.Sleep(200);
@@ -97,9 +98,9 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
                 var activitySet = await client.Conversations.GetActivitiesAsync(conversationinfo.coversation.ConversationId, conversationinfo.watermark);
                 conversationinfo.watermark = activitySet?.Watermark;
 
-                //await sessionService.SetInfoAsync(conversationinfo);
                 await SaveConversationInfoAsync(conversation, userkey, conversationinfo.watermark, conversationinfo.timestamp.Value);
 
+                // appSettings 에 설정한 BotId 는 bot을 등록할 때 사용한 Bot handler 와 같아야 한다. 
                 var activities = from x in activitySet.Activities
                                  where x.From.Id == botId
                                  select x;
@@ -107,7 +108,7 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
                 responseActivity = activities.ToList();
                 // 메시지를 받으면 루프를 벗어남. 
                 // TODO : Timeout을 걸어서 루프를 벗어나는 로직도 필요함. 
-                if (responseActivity.Count > 0 || requestCount > 50) messageReceived = true;
+                if (responseActivity.Count > 0 || requestCount > 3) messageReceived = true;
             }
 
             return responseActivity;
