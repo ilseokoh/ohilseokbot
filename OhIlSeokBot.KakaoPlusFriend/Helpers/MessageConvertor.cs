@@ -41,7 +41,9 @@ namespace OhIlSeokBot.KakaoPlusFriend.Helpers
                                     // 우선 설정하지 않고 보내면 카카오톡이 어찌 표시해주겠지 ... 
                                     msg.message.photo = new Photo
                                     {
-                                        url = attachment.ContentUrl
+                                        url = attachment.ContentUrl,
+                                        width = 100,
+                                        height = 100
                                     };
                                 }
                                 break;
