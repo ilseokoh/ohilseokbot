@@ -24,9 +24,6 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
             sessionService = sessionsvc;
             client = new DirectLineClient(directLineSecret);
             client.SetUserAgent("kakao");
-            
-            // Retry 셋팅
-            // client.SetRetryPolicy(new Microsoft.Rest.TransientFaultHandling.RetryPolicy(,3,TimeSpan.FromMilliseconds(300)));
         }
 
         public async Task ConnectAsync(string userkey)
@@ -47,7 +44,7 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
                     conversation = await client.Conversations.ReconnectToConversationAsync(conversationinfo.coversation.ConversationId);
                     await SaveConversationInfoAsync(conversation, userkey, conversationinfo.watermark, DateTimeOffset.Now);
                 }
-                // timeout 체크. 30분인데 넉넉히 25분으로 체크 1800초 - 300초
+                // timeout 체크. 
                 var now = DateTimeOffset.Now;
                 var timeoutdate = conversationinfo.timestamp.Value.AddSeconds(conversationinfo.coversation.ExpiresIn.Value - 300);
                 var diff = timeoutdate - now;
@@ -89,10 +86,9 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
             bool messageReceived = false;
             int requestCount = 0;
             List<Activity> responseActivity = null;
-            // 3번의 Retry
+            // 5번의 Retry 로직 
             while (!messageReceived)
             {
-                Thread.Sleep(200);
                 requestCount += 1;
 
                 var activitySet = await client.Conversations.GetActivitiesAsync(conversationinfo.coversation.ConversationId, conversationinfo.watermark);
@@ -107,8 +103,9 @@ namespace OhIlSeokBot.KakaoPlusFriend.Services
 
                 responseActivity = activities.ToList();
                 // 메시지를 받으면 루프를 벗어남. 
-                // TODO : Timeout을 걸어서 루프를 벗어나는 로직도 필요함. 
-                if (responseActivity.Count > 0 || requestCount > 3) messageReceived = true;
+                if (responseActivity.Count > 0 || requestCount > 5) messageReceived = true;
+
+                Thread.Sleep(100);
             }
 
             return responseActivity;

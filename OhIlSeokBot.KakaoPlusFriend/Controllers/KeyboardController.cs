@@ -21,7 +21,7 @@ namespace OhIlSeokBot.KakaoPlusFriend.Controllers
             var buttons = new Keyboard
             {
                 type = "buttons",
-                buttons = new string[] {"스케줄조회","출도착조회","예약조회", "서비스문의"}
+                buttons = new string[] {"인사","소개"}
             };
             return Json(buttons, JsonRequestBehavior.AllowGet);
         }

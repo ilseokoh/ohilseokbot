@@ -11,7 +11,7 @@ using System.Web;
 namespace OhIlSeokBot.Dialogs
 {
     [Serializable]
-    [LuisModel("c11e240f-b920-43cf-a82a-374a876c90fb", "ddc7fee2d34b4878962ad58e0ef01302")]
+    [LuisModel("{Your Id form luis.ai}", "{Your secret from luis.ai}")]
     public class OhIlSeokBotLuisDialog: LuisDialog<object>
     {
 
@@ -27,12 +27,20 @@ namespace OhIlSeokBot.Dialogs
         [LuisIntent("인사")]
         public async Task Greeting(IDialogContext context, LuisResult result)
         {
-            string message = $"안녕하세요. 저는 오일석 봇입니다. 저를 만든 오일석을 대신해서 제가 도움을 드릴 수 있으면 좋겠네요.  ";
-            await context.PostAsync(message);
+            if (context.Activity.From.Name == "kakao")
+            {
+                string message = $"안녕하세요. 저는 오일석 봇입니다. 저를 만든 오일석을 대신해서 제가 도움을 드릴 수 있으면 좋겠네요.  저는 이런걸 할 수 있어요.\n 제 소개를 해드릴 수 있어요.\n 제 인사를 할수도 있죠.";
+                await context.PostAsync(message);
+            }
+            else
+            {
+                string message = $"안녕하세요. 저는 오일석 봇입니다. 저를 만든 오일석을 대신해서 제가 도움을 드릴 수 있으면 좋겠네요.  ";
+                await context.PostAsync(message);
 
-            string message2 = $"저는 이런걸 할 수 있어요.\n 날씨를 물어보세요.(내일 서울 날씨는 어때?)\n 제 소개를 해드릴 수 있어요.\n 제 사진을 보여 드릴 수 도 있죠.";
-            await context.PostAsync(message2);
-            context.Wait(MessageReceived);
+                string message2 = $"저는 이런걸 할 수 있어요.\n 제 소개를 해드릴 수 있어요.\n 제 인사를 할수도 있죠.";
+                await context.PostAsync(message2);
+                context.Wait(MessageReceived);
+            }
         }
 
         [LuisIntent("소개요청")]
@@ -40,31 +48,47 @@ namespace OhIlSeokBot.Dialogs
         {
             if (context.Activity.From.Name == "kakao")
             {
-
+                var activity = context.MakeMessage();
+                activity.Text = $"제 소개를 해볼께요. 저는 오일석 봇이죠. 오일석이라는 사람 그 자체는 아니에요. 그러니까 저와 오일석이라는 사람은 다르죠. 헷갈리면 안되요.\n" +
+                    $"물론 저는 오일석이라는 사람이 만들었어요.\n Microsoft Bot Framework를 사용했죠. 사용한 기술들은 이런거에요.\n " +
+                    $"Microsoft Bot Framework\n" +
+                    $"Visual Studio 2017, C#\n" +
+                    $"Direct Line REST API 3.0\n" +
+                    $"Bot Builder SDK\n" +
+                    $"카카오톡 플러스 친구 자동응답 API" +
+                    $"마지막으로 제 사진을 보여드릴께요";
+                activity.Attachments.Add(new Attachment
+                {
+                    ContentType = "image/png",
+                    ContentUrl = "http://kakaobot.ilseokoh.com/images/bot.png"
+                });
+                await context.PostAsync(activity);
+                context.Wait(MessageReceived);
             }
-
-            string message = $"제 소개를 해볼께요. 저는 오일석 봇이죠. 오일석이라는 사람 그 자체는 아니에요. 그러니까 저와 오일석이라는 사람은 다르죠. 헷갈리면 안되요.";
-            await context.PostAsync(message);
-
-            string message2 = $"물론 저는 오일석이라는 사람이 만들었어요.\n Microsoft Bot Framework를 사용했죠. 사용한 기술들은 이런거에요.\n " +
-                $"\n" +
-                $"\n" +
-                $"\n" +
-                $"\n" +
-                $"\n" +
-                $"\n" +
-                $"";
-            await context.PostAsync(message2);
-
-            var activity = context.MakeMessage();
-            activity.Text = $"마지막으로 제 사진을 보여드릴께요";
-            activity.Attachments.Add(new Attachment
+            else
             {
-                ContentType = "image/jpeg",
-                ContentUrl = ""
-            });
-            await context.PostAsync(activity);
-            context.Wait(MessageReceived);
+                string message = $"제 소개를 해볼께요. 저는 오일석 봇이죠. 오일석이라는 사람 그 자체는 아니에요. 그러니까 저와 오일석이라는 사람은 다르죠. 헷갈리면 안되요.";
+                await context.PostAsync(message);
+
+                string message2 = $"물론 저는 오일석이라는 사람이 만들었어요.\n Microsoft Bot Framework를 사용했죠. 사용한 기술들은 이런거에요.\n " +
+                    $"Microsoft Bot Framework\n" +
+                    $"Visual Studio 2017, C#\n" +
+                    $"Direct Line REST API 3.0\n" +
+                    $"Bot Builder SDK\n" +
+                    $"카카오톡 플러스 친구 자동응답 API";
+
+                await context.PostAsync(message2);
+
+                var activity = context.MakeMessage();
+                activity.Text = $"마지막으로 제 사진을 보여드릴께요";
+                activity.Attachments.Add(new Attachment
+                {
+                    ContentType = "image/png",
+                    ContentUrl = "http://kakaobot.ilseokoh.com/images/bot.png"
+                });
+                await context.PostAsync(activity);
+                context.Wait(MessageReceived);
+            }
         }
     }
 }
